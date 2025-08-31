@@ -3036,6 +3036,45 @@ def test_stackplot_baseline():
     axs[1, 1].stackplot(range(100), d.T, baseline='weighted_wiggle')
 
 
+def test_stackplot_twinx_datalim():
+    """
+    Test that dataLim doesn't get corrupted to inf when using twinx with stackplot.
+    
+    This is a regression test for issue #26208 where creating a twin axis
+    after stackplot and then plotting on the twin would corrupt the original
+    axis dataLim to contain infinity values.
+    """
+    # Test data
+    x = np.array([0, 1])
+    y1 = np.array([-22.7, 26.6])
+    y2 = np.array([-0.085, -2.98])
+    
+    fig, ax1 = plt.subplots()
+    
+    # Create stackplot on ax1
+    ax1.stackplot(x, y1)
+    
+    # Capture ax1 dataLim after stackplot - should be finite
+    ax1_datalim_before = ax1.dataLim.intervaly.copy()
+    assert np.isfinite(ax1_datalim_before).all()
+    
+    # Create twinx - this should not affect ax1's dataLim
+    ax2 = ax1.twinx()
+    
+    # Plot on ax2 - this used to corrupt ax1's dataLim to inf
+    ax2.plot(x, y2)
+    
+    # ax1's dataLim should still be finite and approximately unchanged
+    ax1_datalim_after = ax1.dataLim.intervaly.copy()
+    assert np.isfinite(ax1_datalim_after).all(), \
+        f"ax1 dataLim became infinite: {ax1_datalim_after}"
+    
+    # ax2's dataLim should also be finite
+    ax2_datalim_after = ax2.dataLim.intervaly.copy()
+    assert np.isfinite(ax2_datalim_after).all(), \
+        f"ax2 dataLim is not finite: {ax2_datalim_after}"
+
+
 def _bxp_test_helper(
         stats_kwargs={}, transform_stats=lambda s: s, bxp_kwargs={}):
     np.random.seed(937)
