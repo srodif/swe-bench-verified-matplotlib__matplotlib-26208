@@ -1953,6 +1953,10 @@ class _AxesBase(martist.Artist):
             return
 
         dL = self.dataLim
+        # Skip aspect adjustment if dataLim contains infinite values
+        # (e.g., for newly created twin axes that haven't been plotted on)
+        if not (np.isfinite(dL.intervalx).all() and np.isfinite(dL.intervaly).all()):
+            return
         x0, x1 = x_trf.transform(dL.intervalx)
         y0, y1 = y_trf.transform(dL.intervaly)
         xr = 1.05 * (x1 - x0)
