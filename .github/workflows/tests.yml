@@ -148,7 +148,7 @@ jobs:
           esac
 
       - name: Cache pip
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         if: startsWith(runner.os, 'Linux')
         with:
           path: ~/.cache/pip
@@ -156,7 +156,7 @@ jobs:
           restore-keys: |
             ${{ matrix.os }}-py${{ matrix.python-version }}-pip-
       - name: Cache pip
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         if: startsWith(runner.os, 'macOS')
         with:
           path: ~/Library/Caches/pip
@@ -164,7 +164,7 @@ jobs:
           restore-keys: |
             ${{ matrix.os }}-py${{ matrix.python-version }}-pip-
       - name: Cache ccache
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           path: |
             ~/.ccache
@@ -172,7 +172,7 @@ jobs:
           restore-keys: |
             ${{ matrix.os }}-py${{ matrix.python-version }}-ccache-
       - name: Cache Matplotlib
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cache/matplotlib
